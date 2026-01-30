@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civic AI - Pothole Detection Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Upload-specific styling */
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: center;
+        }
+
+        .form-actions .btn {
+            min-width: 180px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">🛣️</div>
+                <div class="logo-text">
+                    <h1>Civic AI</h1>
+                    <p>Road Care System</p>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <li class="nav-item active">
+                    <span class="nav-icon">📤</span>
+                    <span>Upload Image</span>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Settings</span>
+                </li>
+                <li class="nav-item">
+                    <span class="nav-icon">❓</span>
+                    <span>Help</span>
+                </li>
+            </nav>
+
+            <div style="flex-grow: 1;"></div>
+
+            <div style="padding-top: var(--spacing-lg); border-top: 1px solid rgba(255, 255, 255, 0.2); font-size: 12px; opacity: 0.7;">
+                <p style="margin: 0 0 var(--spacing-sm) 0;">Civic AI v1.0</p>
+                <p style="margin: 0;">Powered by YOLOv8</p>
+            </div>
+        </aside>
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h2 class="header-title">Road Damage Detection</h2>
+                <div class="status-badge">
+                    <span class="status-dot"></span>
+                    System Online
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="upload-container">
+                <div class="upload-card">
+                    <div class="upload-icon">🔍</div>
+                    <h1 class="upload-title">Analyze Road Damage</h1>
+                    <p class="upload-subtitle">
+                        Upload an image of a road surface to detect and analyze potholes
+                    </p>
+
+                    <form method="POST" enctype="multipart/form-data" class="upload-form" id="upload-form">
+                        <!-- Drop Zone -->
+                        <div class="drop-zone" id="drop-zone">
+                            <div class="drop-zone-icon">📸</div>
+                            <div class="drop-zone-text">Drag and drop your image here</div>
+                            <div class="drop-zone-hint">or click to browse files</div>
+                        </div>
+
+                        <input type="file" id="file-input" name="image" accept="image/*" required>
+
+                        <!-- Preview Section -->
+                        <div class="preview-container" id="preview-container" style="display: none;">
+                            <label class="preview-label">Image Preview</label>
+                            <img id="preview-image" class="preview-image" alt="Preview">
+
+                            <div class="file-info">
+                                <div class="info-item">
+                                    <div class="info-label">File Name</div>
+                                    <div class="info-value" id="file-name">-</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">File Size</div>
+                                    <div class="info-value" id="file-size">-</div>
+                                </div>
+                            </div>
+
+                            <button type="button" class="remove-image" id="remove-btn">Remove Image</button>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="analyze-btn" disabled>
+                                Analyze Road Damage
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Info Section -->
+                    <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-light);">
+                        <p style="font-size: 13px; color: var(--text-gray); line-height: 1.6;">
+                            <strong>How it works:</strong><br>
+                            Our AI system uses advanced computer vision to detect road damage including potholes, 
+                            cracks, and surface anomalies. Simply upload a clear image of the road surface and we'll 
+                            provide a detailed severity assessment.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="footer">
+                <p>🏛️ Smart City Initiative • Powered by Civic AI</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // DOM Elements
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const fileName = document.getElementById('file-name');
+        const fileSize = document.getElementById('file-size');
+        const removeBtn = document.getElementById('remove-btn');
+        const analyzeBtn = document.getElementById('analyze-btn');
+        const uploadForm = document.getElementById('upload-form');
+
+        // Click to browse
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // Drag and drop handlers
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragging');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragging');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragging');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFileSelect();
+            }
+        });
+
+        // File input change
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Handle file selection
+        function handleFileSelect() {
+            const file = fileInput.files[0];
+
+            if (!file) {
+                previewContainer.style.display = 'none';
+                analyzeBtn.disabled = true;
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select a valid image file');
+                fileInput.value = '';
+                previewContainer.style.display = 'none';
+                analyzeBtn.disabled = true;
+                return;
+            }
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewImage.src = e.target.result;
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                previewContainer.style.display = 'block';
+                analyzeBtn.disabled = false;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Remove image
+        removeBtn.addEventListener('click', () => {
+            fileInput.value = '';
+            previewContainer.style.display = 'none';
+            analyzeBtn.disabled = true;
+        });
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // Form submission loading state
+        uploadForm.addEventListener('submit', () => {
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = 'Analyzing...';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+[
+    {
+        "time": "2026-01-30 16:37:10.989595",
+        "image": "asphalt-damage-road-cracking.jpg",
+        "image_description": "Describe the image.s road",
+        "issue_type": "road_damage",
+        "step": 3,
+        "bot_question": "Is this causing accidents or traffic problems?",
+        "user_answer": "Yes, accidents happen at night",
+        "status": "completed"
+    }
+]
