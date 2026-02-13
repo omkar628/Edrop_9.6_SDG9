@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -208,6 +209,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="dashboard">
         <!-- Sidebar -->
@@ -237,11 +239,18 @@
                     <span class="nav-icon">❓</span>
                     <span>Help</span>
                 </li>
+                <a href="/admin/dashboard" style="text-decoration: none;">
+                    <li class="nav-item">
+                        <span class="nav-icon">🛡️</span>
+                        <span>Admin Portal</span>
+                    </li>
+                </a>
             </nav>
 
             <div style="flex-grow: 1;"></div>
 
-            <div style="padding-top: var(--spacing-lg); border-top: 1px solid rgba(255, 255, 255, 0.2); font-size: 12px; opacity: 0.7;">
+            <div
+                style="padding-top: var(--spacing-lg); border-top: 1px solid rgba(255, 255, 255, 0.2); font-size: 12px; opacity: 0.7;">
                 <p style="margin: 0 0 var(--spacing-sm) 0;">Civic AI v1.0</p>
                 <p style="margin: 0;">Powered by YOLOv8</p>
             </div>
@@ -266,7 +275,7 @@
                     <div>
                         <h1 class="result-title">Road Damage Analysis</h1>
                         <p style="font-size: 14px; color: var(--text-gray); margin-top: var(--spacing-sm);">
-                            File: <strong>{{ image }}</strong>
+                            File: <strong>{{ image }}</strong> | Report ID: <strong>#{{ report_id }}</strong>
                         </p>
                     </div>
                 </div>
@@ -276,11 +285,13 @@
                     <!-- Left: Image -->
                     <div>
                         <div class="detail-box">
-                            <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-gray); margin-bottom: var(--spacing-lg);">
+                            <div
+                                style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-gray); margin-bottom: var(--spacing-lg);">
                                 Uploaded Image
                             </div>
                             <div class="image-card-container">
-                                <img src="{{ url_for('static', filename='uploads/' + image) }}" alt="Uploaded road image">
+                                <img src="{{ url_for('static', filename='uploads/' + image) }}"
+                                    alt="Uploaded road image">
                             </div>
                         </div>
                     </div>
@@ -289,139 +300,230 @@
                     <div>
                         <!-- Severity Badge -->
                         <div class="detail-box">
+                            <!-- Simple Message for Uneducated/Local Users -->
+                            <div
+                                style="background: var(--bg-light); padding: var(--spacing-lg); border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); border: 2px solid var(--border-light); text-align: center;">
+                                <h3 style="color: var(--primary-blue); margin-bottom: var(--spacing-sm);">💡 सड़क की
+                                    स्थिति (Road Status)</h3>
+                                <p style="font-size: 18px; font-weight: 700; color: var(--text-dark);">
+                                    {{ municipal_info.simple_msg }}
+                                </p>
+                            </div>
+
                             <div class="severity-label">Detection Result</div>
 
                             {% if severity == "No pothole detected" %}
-                                <div class="severity-badge severity-none">
-                                    <span class="severity-dot"></span>
-                                    No Damage
-                                </div>
+                            <div class="severity-badge severity-none">
+                                <span class="severity-dot"></span>
+                                No Damage
+                            </div>
                             {% elif severity == "Low" %}
-                                <div class="severity-badge severity-low">
-                                    <span class="severity-dot"></span>
-                                    Low Severity
-                                </div>
+                            <div class="severity-badge severity-low">
+                                <span class="severity-dot"></span>
+                                Low Severity
+                            </div>
                             {% elif severity == "Moderate" %}
-                                <div class="severity-badge severity-moderate">
-                                    <span class="severity-dot"></span>
-                                    Moderate Severity
-                                </div>
+                            <div class="severity-badge severity-moderate">
+                                <span class="severity-dot"></span>
+                                Moderate Severity
+                            </div>
                             {% else %}
-                                <div class="severity-badge severity-severe">
-                                    <span class="severity-dot"></span>
-                                    Severe Damage
-                                </div>
+                            <div class="severity-badge severity-severe">
+                                <span class="severity-dot"></span>
+                                Severe Damage
+                            </div>
                             {% endif %}
 
                             <!-- Details -->
-                            <div style="margin-top: var(--spacing-lg); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-light);">
-                                <div class="detail-row">
-                                    <span class="detail-label">Issue Type</span>
-                                    <span class="detail-value">Pothole</span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Severity Level</span>
-                                    <span class="detail-value">
-                                        {% if severity == "No pothole detected" %}
-                                            None
-                                        {% else %}
-                                            {{ severity }}
-                                        {% endif %}
-                                    </span>
-                                </div>
-                                <div class="detail-row">
-                                    <span class="detail-label">Detection Status</span>
-                                    <span class="detail-value" style="color: var(--success-green);">✓ Detected</span>
-                                </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Status</span>
+                                <span class="detail-value" style="color: var(--success-green);">✓ Reported</span>
                             </div>
-
-                            <!-- Recommendation -->
-                            {% if severity == "No pothole detected" %}
-                                <div class="recommendation-banner">
-                                    <div class="recommendation-title">✓ Road Condition</div>
-                                    <div class="recommendation-text">
-                                        No significant road damage detected. Road surface is in acceptable condition.
-                                    </div>
-                                </div>
-                            {% elif severity == "Low" %}
-                                <div class="recommendation-banner">
-                                    <div class="recommendation-title">📋 Recommended Action</div>
-                                    <div class="recommendation-text">
-                                        Monitor the area and schedule routine maintenance. Document location for future inspection.
-                                    </div>
-                                </div>
-                            {% elif severity == "Moderate" %}
-                                <div class="recommendation-banner warning">
-                                    <div class="recommendation-title">⚠️ Recommended Action</div>
-                                    <div class="recommendation-text">
-                                        Schedule maintenance within 2-4 weeks. Prioritize for repair crew assignment. May affect traffic safety.
-                                    </div>
-                                </div>
-                            {% else %}
-                                <div class="recommendation-banner urgent">
-                                    <div class="recommendation-title">🚨 Urgent Action Required</div>
-                                    <div class="recommendation-text">
-                                        Immediate repair recommended. Significant safety hazard. Mark area and notify maintenance team urgently.
-                                    </div>
-                                </div>
-                            {% endif %}
+                            <div class="detail-row">
+                                <span class="detail-label">Department</span>
+                                <span class="detail-value">{{ municipal_info.department }}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Priority</span>
+                                <span class="detail-value">{{ municipal_info.priority }}</span>
+                            </div>
+                            <div class="detail-row"
+                                style="background: rgba(30, 58, 138, 0.05); padding: 8px; border-radius: 4px; margin-top: 10px;">
+                                <span class="detail-label" style="color: var(--primary-blue);">Damage Percentage</span>
+                                <span class="detail-value" style="font-size: 18px; color: var(--primary-blue);">{{
+                                    percentage }}% of surface</span>
+                            </div>
                         </div>
+
+                        <!-- Municipal Action -->
+                        <div class="recommendation-banner info">
+                            <div class="recommendation-title">🏛️ Municipal Protocol</div>
+                            <div class="recommendation-text">
+                                <strong>Action:</strong> {{ municipal_info.action }}<br>
+                                <strong>Target SLA:</strong> {{ municipal_info.sla }}
+                            </div>
+                        </div>
+
+                        <!-- Unique Feature: Direct Message to Municipal -->
+                        {% if severity != "No pothole detected" %}
+                        <div style="margin-top: var(--spacing-xl);">
+                            <a href="https://wa.me/{{ municipal_info.officer_phone }}?text=Hello%20Municipal%20Officer,%20I%20want%20to%20report%20a%20pothole%20issue.%20Report%20ID:%20%23{{ report_id }}.%20Severity:%20{{ severity }}.%20Please%20take%20action."
+                                class="btn btn-primary"
+                                style="background: #25D366; width: 100%; border: none; padding: var(--spacing-lg); font-size: 18px; display: flex; align-items: center; justify-content: center; gap: 10px; color: white; border-radius: var(--radius-lg);">
+                                📲 Forward to Ward Officer (WhatsApp)
+                            </a>
+                            <p style="font-size: 11px; text-align: center; color: var(--text-gray); margin-top: 8px;">
+                                Forward this report directly to the Ward Officer via WhatsApp
+                            </p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Recommendation -->
+                        {% if severity == "No pothole detected" %}
+                        <div class="recommendation-banner">
+                            <div class="recommendation-title">✓ Road Condition</div>
+                            <div class="recommendation-text">
+                                No significant road damage detected. Road surface is in acceptable condition.
+                            </div>
+                        </div>
+                        {% elif severity == "Low" %}
+                        <div class="recommendation-banner">
+                            <div class="recommendation-title">📋 Recommended Action</div>
+                            <div class="recommendation-text">
+                                Monitor the area and schedule routine maintenance. Document location for future
+                                inspection.
+                            </div>
+                        </div>
+                        {% elif severity == "Moderate" %}
+                        <div class="recommendation-banner warning">
+                            <div class="recommendation-title">⚠️ Recommended Action</div>
+                            <div class="recommendation-text">
+                                Schedule maintenance within 2-4 weeks. Prioritize for repair crew assignment. May affect
+                                traffic safety.
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="recommendation-banner urgent">
+                            <div class="recommendation-title">🚨 Urgent Action Required</div>
+                            <div class="recommendation-text">
+                                Immediate repair recommended. Significant safety hazard. Mark area and notify
+                                maintenance team urgently.
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
-                </div>
-
-                <!-- Statistics Section -->
-                <div style="margin-top: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
-                    <h3 style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: var(--spacing-lg); text-transform: uppercase; letter-spacing: 0.5px;">
-                        Analysis Metrics
-                    </h3>
-
-                    <div class="stats-grid">
-                        <div class="stat-card success">
-                            <div class="stat-value">92%</div>
-                            <div class="stat-label">Detection Confidence</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">1</div>
-                            <div class="stat-label">Issues Found</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="action-section">
-                    <a href="/" class="btn btn-primary">
-                        📤 Upload New Image
-                    </a>
-                    <a href="/" class="btn btn-secondary">
-                        📋 Return to Dashboard
-                    </a>
-                </div>
-
-                <!-- Footer Info -->
-                <div style="margin-top: var(--spacing-2xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-light); font-size: 12px; color: var(--text-gray);">
-                    <p>
-                        <strong>Analysis Details:</strong><br>
-                        This assessment is based on AI computer vision analysis using YOLOv8 object detection. 
-                        Results should be verified by municipal staff for accuracy and on-field conditions before maintenance decisions.
-                        Detection confidence reflects algorithm certainty level.
-                    </p>
                 </div>
             </div>
-        </main>
+
+            <!-- Statistics Section -->
+            <div style="margin-top: var(--spacing-2xl); margin-bottom: var(--spacing-xl);">
+                <h3
+                    style="font-size: 16px; font-weight: 700; color: var(--text-dark); margin-bottom: var(--spacing-lg); text-transform: uppercase; letter-spacing: 0.5px;">
+                    Analysis Metrics
+                </h3>
+
+                <div class="stats-grid">
+                    <div class="stat-card success">
+                        <div class="stat-value">92%</div>
+                        <div class="stat-label">Detection Confidence</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">1</div>
+                        <div class="stat-label">Issues Found</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-section">
+                <a href="/" class="btn btn-primary">
+                    📤 Upload New Image
+                </a>
+                <a href="/" class="btn btn-secondary">
+                    📋 Return to Dashboard
+                </a>
+            </div>
+
+            <!-- Footer Info -->
+            <div
+                style="margin-top: var(--spacing-2xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-light); font-size: 12px; color: var(--text-gray);">
+                <p>
+                    <strong>Analysis Details:</strong><br>
+                    This assessment is based on AI computer vision analysis using YOLOv8 object detection.
+                    Results should be verified by municipal staff for accuracy and on-field conditions before
+                    maintenance decisions.
+                    Detection confidence reflects algorithm certainty level.
+                </p>
+            </div>
+    </div>
+    </main>
     </div>
 
+    <!-- AI Assistant Widget -->
+    <div id="ai-chat-widget" class="ai-assistant-widget" style="display: none;">
+        <div class="chat-header" onclick="toggleChat()">
+            <span>🤖 Civic AI Assistant</span>
+            <span style="cursor: pointer;">✕</span>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="chat-bubble bubble-ai">Hello! I'm your technical road assistant. Ask me anything about this
+                detection (like "What is Bitumen?") or road repair terms!</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Ask about Bitumen, SLA..."
+                onkeypress="handleChatKey(event)">
+            <button class="btn-chat-send" onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
+    <div id="chat-toggle" class="chat-toggle-btn" onclick="toggleChat()">🤖</div>
+
     <script>
-        // Animate stats on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            const confidenceFills = document.querySelectorAll('.confidence-fill');
-            confidenceFills.forEach((fill) => {
-                const width = fill.style.width;
-                fill.style.width = '0%';
-                setTimeout(() => {
-                    fill.style.width = width;
-                }, 100);
-            });
-        });
+        function toggleChat() {
+            const widget = document.getElementById('ai-chat-widget');
+            const toggle = document.getElementById('chat-toggle');
+            if (widget.style.display === 'none') {
+                widget.style.display = 'flex';
+                toggle.style.display = 'none';
+            } else {
+                widget.style.display = 'none';
+                toggle.style.display = 'flex';
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            addMessage(msg, 'user');
+            input.value = '';
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg })
+                });
+                const data = await response.json();
+                addMessage(data.response, 'ai');
+            } catch (e) {
+                addMessage("Sorry, I'm having trouble connecting right now.", 'ai');
+            }
+        }
+
+        function addMessage(text, sender) {
+            const body = document.getElementById('chat-body');
+            const div = document.createElement('div');
+            div.className = `chat-bubble bubble-${sender}`;
+            div.innerText = text;
+            body.appendChild(div);
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function handleChatKey(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
     </script>
 </body>
+
 </html>

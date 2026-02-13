@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -24,6 +25,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="dashboard">
         <!-- Sidebar -->
@@ -53,11 +55,18 @@
                     <span class="nav-icon">❓</span>
                     <span>Help</span>
                 </li>
+                <a href="/admin/dashboard" style="text-decoration: none;">
+                    <li class="nav-item">
+                        <span class="nav-icon">🛡️</span>
+                        <span>Admin Portal</span>
+                    </li>
+                </a>
             </nav>
 
             <div style="flex-grow: 1;"></div>
 
-            <div style="padding-top: var(--spacing-lg); border-top: 1px solid rgba(255, 255, 255, 0.2); font-size: 12px; opacity: 0.7;">
+            <div
+                style="padding-top: var(--spacing-lg); border-top: 1px solid rgba(255, 255, 255, 0.2); font-size: 12px; opacity: 0.7;">
                 <p style="margin: 0 0 var(--spacing-sm) 0;">Civic AI v1.0</p>
                 <p style="margin: 0;">Powered by YOLOv8</p>
             </div>
@@ -92,7 +101,8 @@
                             <div class="drop-zone-hint">or click to browse files</div>
                         </div>
 
-                        <input type="file" id="file-input" name="image" accept="image/*" required>
+                        <input type="file" id="file-input" name="image" accept="image/*" required
+                            style="display: none;">
 
                         <!-- Preview Section -->
                         <div class="preview-container" id="preview-container" style="display: none;">
@@ -122,11 +132,12 @@
                     </form>
 
                     <!-- Info Section -->
-                    <div style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-light);">
+                    <div
+                        style="margin-top: var(--spacing-xl); padding-top: var(--spacing-lg); border-top: 1px solid var(--border-light);">
                         <p style="font-size: 13px; color: var(--text-gray); line-height: 1.6;">
                             <strong>How it works:</strong><br>
-                            Our AI system uses advanced computer vision to detect road damage including potholes, 
-                            cracks, and surface anomalies. Simply upload a clear image of the road surface and we'll 
+                            Our AI system uses advanced computer vision to detect road damage including potholes,
+                            cracks, and surface anomalies. Simply upload a clear image of the road surface and we'll
                             provide a detailed severity assessment.
                         </p>
                     </div>
@@ -139,8 +150,72 @@
         </main>
     </div>
 
+    <!-- AI Assistant Widget -->
+    <div id="ai-chat-widget" class="ai-assistant-widget" style="display: none;">
+        <div class="chat-header" onclick="toggleChat()">
+            <span>🤖 Civic AI Assistant</span>
+            <span style="cursor: pointer;">✕</span>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="chat-bubble bubble-ai">Hello! I'm your technical road assistant. Ask me anything about terms
+                like Bitumen, Potholes, or how road repairs work!</div>
+        </div>
+        <div class="chat-footer">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Ask about Bitumen, SLA..."
+                onkeypress="handleChatKey(event)">
+            <button class="btn-chat-send" onclick="sendChatMessage()">Send</button>
+        </div>
+    </div>
+    <div id="chat-toggle" class="chat-toggle-btn" onclick="toggleChat()">🤖</div>
+
     <script>
-        // DOM Elements
+        function toggleChat() {
+            const widget = document.getElementById('ai-chat-widget');
+            const toggle = document.getElementById('chat-toggle');
+            if (widget.style.display === 'none') {
+                widget.style.display = 'flex';
+                toggle.style.display = 'none';
+            } else {
+                widget.style.display = 'none';
+                toggle.style.display = 'flex';
+            }
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            addMessage(msg, 'user');
+            input.value = '';
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg })
+                });
+                const data = await response.json();
+                addMessage(data.response, 'ai');
+            } catch (e) {
+                addMessage("Sorry, I'm having trouble connecting right now.", 'ai');
+            }
+        }
+
+        function addMessage(text, sender) {
+            const body = document.getElementById('chat-body');
+            const div = document.createElement('div');
+            div.className = `chat-bubble bubble-${sender}`;
+            div.innerText = text;
+            body.appendChild(div);
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function handleChatKey(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        // --- Existing JS ---
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
         const previewContainer = document.getElementById('preview-container');
@@ -232,4 +307,5 @@
         });
     </script>
 </body>
+
 </html>

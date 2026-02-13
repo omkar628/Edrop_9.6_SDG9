@@ -1,0 +1,53 @@
+[
+    {
+        "id": "c665eb3d",
+        "timestamp": "2026-02-13 20:23:36",
+        "image": "3dbcfd8f-f31f-4fb7-a4b8-fa5f1fc5b8ce_pathols.jpg",
+        "severity": "Moderate",
+        "department": "Road Maintenance Division",
+        "priority": "Medium",
+        "action": "Schedule for repair in the next maintenance cycle. Regular monitoring.",
+        "status": "Reported"
+    },
+    {
+        "id": "367a79d6",
+        "timestamp": "2026-02-13 20:25:31",
+        "image": "1168bfaf-d331-483e-93f5-7a1f811a2d64_pathols.jpg",
+        "severity": "Moderate",
+        "department": "Road Maintenance Division",
+        "priority": "Medium",
+        "action": "Schedule for repair in the next maintenance cycle. Regular monitoring.",
+        "status": "Reported"
+    },
+    {
+        "id": "a82eb4f6",
+        "timestamp": "2026-02-13 20:29:44",
+        "image": "8fe3eec7-c9a3-4e7d-b75d-b26239c23192_pathols.jpg",
+        "severity": "Moderate",
+        "department": "Road Maintenance Division",
+        "priority": "Medium",
+        "action": "Schedule for repair in the next maintenance cycle. Regular monitoring.",
+        "status": "Reported"
+    },
+    {
+        "id": "3784dd6d",
+        "timestamp": "2026-02-13 20:38:38",
+        "image": "52b1da42-9740-4b46-8f37-0ae9509f0498_pathols.jpg",
+        "severity": "Moderate",
+        "department": "Road Maintenance Division",
+        "priority": "Medium",
+        "action": "Schedule for repair soon. Drive carefully.",
+        "status": "Reported"
+    },
+    {
+        "id": "92f38317",
+        "timestamp": "2026-02-13 20:53:30",
+        "image": "2ece38d0-2d2f-4881-a06d-743511618036_pathols.jpg",
+        "severity": "Moderate",
+        "percentage": 2.21,
+        "department": "Road Maintenance Division",
+        "priority": "Medium",
+        "action": "Schedule for repair soon. Drive carefully.",
+        "status": "Reported"
+    }
+]

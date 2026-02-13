@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Civic AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: var(--spacing-2xl);
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+        .input-group {
+            text-align: left;
+        }
+        input {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-xs);
+        }
+        .flash-msg {
+            color: var(--danger-red);
+            font-size: 14px;
+            margin-bottom: var(--spacing-md);
+        }
+    </style>
+</head>
+<body style="background: var(--bg-light);">
+    <div class="login-container">
+        <div class="logo-icon" style="margin: 0 auto var(--spacing-lg);">🔐</div>
+        <h2>Admin Portal</h2>
+        <p style="color: var(--text-gray);">Enter password to access dashboard</p>
+        
+        <form method="POST" class="login-form">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                <div class="flash-msg">{{ messages[0] }}</div>
+              {% endif %}
+            {% endwith %}
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="••••" required autofocus>
+            </div>
+            <button type="submit" class="btn btn-primary">Login to Dashboard</button>
+            <a href="/" class="btn-link">Back to Landing Page</a>
+        </form>
+    </div>
+</body>
+</html>

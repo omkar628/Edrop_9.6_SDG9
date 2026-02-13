@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Civic AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .report-table {
+            width: 100%;
+            background: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            border-collapse: collapse;
+            overflow: hidden;
+        }
+
+        .report-table th,
+        .report-table td {
+            padding: var(--spacing-md);
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .report-table th {
+            background: var(--bg-light);
+            font-weight: 700;
+            color: var(--text-gray);
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-critical {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+        }
+
+        .badge-medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-yellow);
+        }
+
+        .badge-low {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+        }
+
+        .report-img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">🏢</div>
+                <div class="logo-text">
+                    <h1>Admin Panel</h1>
+                    <p>Municipal Control</p>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <li class="nav-item active">
+                    <span class="nav-icon">📊</span>
+                    <span>Overview</span>
+                </li>
+                <a href="/admin/logout" style="text-decoration: none;">
+                    <li class="nav-item">
+                        <span class="nav-icon">🚪</span>
+                        <span>Logout</span>
+                    </li>
+                </a>
+            </nav>
+        </aside>
+
+        <header class="header">
+            <h2 class="header-title">Municipal Work Queue</h2>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                Active Sessions: {{ stats.total }}
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Stats -->
+            <div class="admin-grid">
+                <div class="stat-card">
+                    <div class="stat-value">{{ stats.total }}</div>
+                    <div class="stat-label">Total Reports</div>
+                </div>
+                <div class="stat-card danger">
+                    <div class="stat-value">{{ stats.critical }}</div>
+                    <div class="stat-label">Critical Issues</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-value">{{ stats.medium }}</div>
+                    <div class="stat-label">Medium Priority</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-value">{{ stats.low }}</div>
+                    <div class="stat-label">Low Priority</div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: var(--spacing-lg);">Recent Pothole Reports</h3>
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Severity</th>
+                        <th>Priority</th>
+                        <th>Department</th>
+                        <th>Timestamp</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>#{{ report.id }}</td>
+                        <td><img src="{{ url_for('static', filename='uploads/' + report.image) }}" class="report-img">
+                        </td>
+                        <td>{{ report.severity }}</td>
+                        <td>
+                            <span class="badge badge-{{ report.priority.lower() }}">
+                                {{ report.priority }}
+                            </span>
+                        </td>
+                        <td>{{ report.department }}</td>
+                        <td>{{ report.timestamp }}</td>
+                        <td><span style="color: var(--primary-light); font-weight: 600;">{{ report.status }}</span></td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7"
+                            style="text-align: center; color: var(--text-gray); padding: var(--spacing-2xl);">No reports
+                            found yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </main>
+    </div>
+</body>
+
+</html>
