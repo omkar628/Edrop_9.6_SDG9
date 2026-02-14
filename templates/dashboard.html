@@ -4,163 +4,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Civic AI</title>
+    <title>Admin Dashboard | Civic AI</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        .admin-grid {
+        .stats-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: var(--spacing-lg);
-            margin-bottom: var(--spacing-2xl);
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
-        .report-table {
-            width: 100%;
+        .stat-card {
             background: white;
-            border-radius: var(--radius-xl);
+            padding: 20px;
+            border-radius: 12px;
             box-shadow: var(--shadow-md);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        table {
+            width: 100%;
             border-collapse: collapse;
+            background: white;
+            border-radius: 12px;
             overflow: hidden;
         }
 
-        .report-table th,
-        .report-table td {
-            padding: var(--spacing-md);
+        th,
+        td {
+            padding: 15px;
             text-align: left;
             border-bottom: 1px solid var(--border-light);
         }
 
-        .report-table th {
-            background: var(--bg-light);
-            font-weight: 700;
-            color: var(--text-gray);
-            font-size: 12px;
-            text-transform: uppercase;
+        th {
+            background: #f8fafc;
         }
 
         .badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .badge-critical {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger-red);
-        }
-
-        .badge-medium {
-            background: rgba(245, 158, 11, 0.1);
-            color: var(--warning-yellow);
-        }
-
-        .badge-low {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-green);
-        }
-
-        .report-img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 4px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
         }
     </style>
 </head>
 
 <body>
     <div class="dashboard">
-        <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="sidebar-logo">
-                <div class="logo-icon">🏢</div>
-                <div class="logo-text">
-                    <h1>Admin Panel</h1>
-                    <p>Municipal Control</p>
-                </div>
+            <div class="brand">
+                <span class="brand-icon">🛣️</span>
+                <h2 style="font-size: 20px;">Civic AI</h2>
             </div>
             <nav class="nav-menu">
-                <li class="nav-item active">
-                    <span class="nav-icon">📊</span>
-                    <span>Overview</span>
-                </li>
-                <a href="/admin/logout" style="text-decoration: none;">
-                    <li class="nav-item">
-                        <span class="nav-icon">🚪</span>
-                        <span>Logout</span>
-                    </li>
-                </a>
+                <a href="/" class="nav-item">📤 Upload Analysis</a>
+                <a href="/admin/dashboard" class="nav-item active">📊 Admin Dashboard</a>
+                <a href="/admin/logout" class="nav-item" style="color: var(--danger-red); margin-top: auto;">🔒
+                    Logout</a>
             </nav>
         </aside>
 
-        <header class="header">
-            <h2 class="header-title">Municipal Work Queue</h2>
-            <div class="status-badge">
-                <span class="status-dot"></span>
-                Active Sessions: {{ stats.total }}
-            </div>
-        </header>
-
         <main class="main-content">
-            <!-- Stats -->
-            <div class="admin-grid">
+            <header style="margin-bottom: 30px;">
+                <h1>Municipal Command Center</h1>
+                <p style="color: var(--text-gray);">Tracking road infrastructure health & maintenance</p>
+            </header>
+
+            <div class="stats-row">
                 <div class="stat-card">
+                    <div style="font-size: 12px; color: var(--text-gray);">TOTAL REPORTS</div>
                     <div class="stat-value">{{ stats.total }}</div>
-                    <div class="stat-label">Total Reports</div>
                 </div>
-                <div class="stat-card danger">
-                    <div class="stat-value">{{ stats.critical }}</div>
-                    <div class="stat-label">Critical Issues</div>
+                <div class="stat-card">
+                    <div style="font-size: 12px; color: var(--danger-red);">CRITICAL</div>
+                    <div class="stat-value" style="color: var(--danger-red);">{{ stats.critical }}</div>
                 </div>
-                <div class="stat-card warning">
-                    <div class="stat-value">{{ stats.medium }}</div>
-                    <div class="stat-label">Medium Priority</div>
+                <div class="stat-card">
+                    <div style="font-size: 12px; color: var(--warning-yellow);">MEDIUM</div>
+                    <div class="stat-value" style="color: var(--warning-yellow);">{{ stats.medium }}</div>
                 </div>
-                <div class="stat-card success">
-                    <div class="stat-value">{{ stats.low }}</div>
-                    <div class="stat-label">Low Priority</div>
+                <div class="stat-card">
+                    <div style="font-size: 12px; color: var(--success-green);">LOW</div>
+                    <div class="stat-value" style="color: var(--success-green);">{{ stats.low }}</div>
                 </div>
             </div>
 
-            <h3 style="margin-bottom: var(--spacing-lg);">Recent Pothole Reports</h3>
-            <table class="report-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Image</th>
-                        <th>Severity</th>
-                        <th>Priority</th>
-                        <th>Department</th>
-                        <th>Timestamp</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for report in reports %}
-                    <tr>
-                        <td>#{{ report.id }}</td>
-                        <td><img src="{{ url_for('static', filename='uploads/' + report.image) }}" class="report-img">
-                        </td>
-                        <td>{{ report.severity }}</td>
-                        <td>
-                            <span class="badge badge-{{ report.priority.lower() }}">
-                                {{ report.priority }}
-                            </span>
-                        </td>
-                        <td>{{ report.department }}</td>
-                        <td>{{ report.timestamp }}</td>
-                        <td><span style="color: var(--primary-light); font-weight: 600;">{{ report.status }}</span></td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="7"
-                            style="text-align: center; color: var(--text-gray); padding: var(--spacing-2xl);">No reports
-                            found yet.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="card">
+                <h3 style="margin-bottom: 20px;">Recent Incident Logs</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Severity</th>
+                            <th>Risk</th>
+                            <th>Cost</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for report in reports %}
+                        <tr>
+                            <td style="font-family: monospace; font-weight: 700;">#{{ report.id }}</td>
+                            <td>{{ report.timestamp }}</td>
+                            <td>
+                                <span class="badge" style="background: 
+                                    {% if report.severity == 'Severe' %}rgba(239, 68, 68, 0.1); color: var(--danger-red)
+                                    {% elif report.severity == 'Moderate' %}rgba(245, 158, 11, 0.1); color: var(--warning-yellow)
+                                    {% else %}rgba(16, 185, 129, 0.1); color: var(--success-green){% endif %};">
+                                    {{ report.severity }}
+                                </span>
+                            </td>
+                            <td>
+                                <div
+                                    style="width: 80px; height: 8px; background: #eee; border-radius: 4px; overflow: hidden;">
+                                    <div
+                                        style="width: {{ report.risk_score }}%; height: 100%; background: {% if report.risk_score > 70 %}var(--danger-red){% else %}var(--primary-light){% endif %};">
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="font-weight: 700;">₹{{ report.cost }}</td>
+                            <td>{{ report.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </main>
     </div>
 </body>
